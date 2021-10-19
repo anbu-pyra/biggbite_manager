@@ -1,7 +1,17 @@
-import 'package:bigg_bite_manager/side_nav.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MyApp());
+import 'Current_Orders/current_order_list.dart';
+import 'Current_Orders/current_orders.dart';
+import 'Manage_Category/ManageCategoryEdit.dart';
+import 'Manage_Category/manage_category.dart';
+import 'Manage_Items/manage_items.dart';
+
+import 'Manage_Items/manage_items_details.dart';
+import 'side_nav.dart';
+
+
+void main() => runApp(MyApp());
+  //(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -10,10 +20,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       title: appTitle,
-      // home: MyHomePage(title: appTitle),
-      home: SideNavScreen(),
+      //home: MyHomePage(title: appTitle),
+    //home: SideNavScreen(),
+   //  home: ManageCategory(),
+    home:SideNavScreen(),
     );
   }
 }
