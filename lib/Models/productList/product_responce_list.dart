@@ -4,13 +4,14 @@
 
 class ProductResponceList {
   ProductResponceList({
-      bool? error, 
-      String? message, 
-      List<Data>? data,}){
+    bool? error,
+    String? message,
+    List<Data>? data,
+  }) {
     _error = error;
     _message = message;
     _data = data;
-}
+  }
 
   ProductResponceList.fromJson(dynamic json) {
     _error = json['error'];
@@ -39,7 +40,6 @@ class ProductResponceList {
     }
     return map;
   }
-
 }
 
 /// id : 1
@@ -59,20 +59,22 @@ class ProductResponceList {
 
 class Data {
   Data({
-      int? id, 
-      int? categoryId, 
-      String? productName, 
-      int? maxQuantity, 
-      String? description, 
-      int? slashedPrice, 
-      String? photo, 
-      int? isVeg, 
-      int? status, 
-      int? price, 
-      dynamic gst, 
-      String? specifications, 
-      String? updatedAt, 
-      String? createdAt,}){
+    int? id,
+    int? categoryId,
+    String? productName,
+    int? maxQuantity,
+    String? description,
+    int? slashedPrice,
+    String? photo,
+    int? isVeg,
+    int? status,
+    int? price,
+    dynamic gst,
+    String? specifications,
+    String? updatedAt,
+    String? createdAt,
+    int? offer_percentage,
+  }) {
     _id = id;
     _categoryId = categoryId;
     _productName = productName;
@@ -87,7 +89,8 @@ class Data {
     _specifications = specifications;
     _updatedAt = updatedAt;
     _createdAt = createdAt;
-}
+    _offer_percentage = offer_percentage;
+  }
 
   Data.fromJson(dynamic json) {
     _id = json['id'];
@@ -96,12 +99,12 @@ class Data {
     _maxQuantity = json['max_quantity'];
     _description = json['description'];
     _slashedPrice = json['slashed_price'];
+    _offer_percentage = json['offer_percentage'];
     _photo = json['photo'];
     _isVeg = json['is_veg'];
     _status = json['status'];
     _price = json['price'];
     _gst = json['gst'];
-    _specifications = json['specifications'];
     _updatedAt = json['updated_at'];
     _createdAt = json['created_at'];
   }
@@ -110,6 +113,7 @@ class Data {
   String? _productName;
   int? _maxQuantity;
   String? _description;
+  int? _offer_percentage;
   int? _slashedPrice;
   String? _photo;
   int? _isVeg;
@@ -127,6 +131,7 @@ class Data {
   String? get description => _description;
   int? get slashedPrice => _slashedPrice;
   String? get photo => _photo;
+  int? get offer_percentage => _offer_percentage;
   int? get isVeg => _isVeg;
   int? get status => _status;
   int? get price => _price;
@@ -148,10 +153,8 @@ class Data {
     map['status'] = _status;
     map['price'] = _price;
     map['gst'] = _gst;
-    map['specifications'] = _specifications;
     map['updated_at'] = _updatedAt;
     map['created_at'] = _createdAt;
     return map;
   }
-
 }

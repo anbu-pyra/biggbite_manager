@@ -9,9 +9,12 @@ import 'Manage_Items/manage_items.dart';
 import 'Manage_Items/manage_items_details.dart';
 import 'side_nav.dart';
 
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() => runApp(MyApp());
-  //(const MyApp());
+  runApp(MyApp());
+}
+//(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -20,12 +23,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       title: appTitle,
       //home: MyHomePage(title: appTitle),
-    //home: SideNavScreen(),
-   //  home: ManageCategory(),
-    home:SideNavScreen(),
+      //home: SideNavScreen(),
+      //  home: ManageCategory(),
+      home: SideNavScreen(),
     );
   }
 }

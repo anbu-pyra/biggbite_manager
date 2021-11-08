@@ -1,31 +1,46 @@
 import 'dart:io';
 
 import 'package:bigg_bite_manager/Models/categoryList/category_edit.dart';
+import 'package:bigg_bite_manager/Models/categoryList/category_response_list.dart';
 import 'package:bigg_bite_manager/api/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:image_picker_web/image_picker_web.dart';
 
 import '../common_response_model.dart';
 import '../web_utils.dart';
 
-class ManageCategoryEdit extends StatefulWidget {
-  ManageCategoryEdit(this.Categoryname, this.CategoryImage, this.id);
-  String Categoryname;
-  String CategoryImage;
+class BannerEditScreen extends StatefulWidget {
+  BannerEditScreen(this.BannerUrl, this.CategoryId, this.id);
+  String BannerUrl;
+  int CategoryId;
   int id;
   @override
-  _ManageCategoryEditState createState() => _ManageCategoryEditState();
+  _BannerEditScreenState createState() => _BannerEditScreenState();
 }
 
-class _ManageCategoryEditState extends State<ManageCategoryEdit> {
+class _BannerEditScreenState extends State<BannerEditScreen> {
   TextEditingController categoryController = TextEditingController();
+  CategoryResponseList categoryResponseList = CategoryResponseList();
+  int selectedCategoryId = 1;
+
   @override
   void initState() {
-    categoryController.text = widget.Categoryname;
+    selectedCategoryId = widget.CategoryId;
+    getCategoryList();
     setState(() {});
     super.initState();
+  }
+
+  Future<void> getCategoryList() async {
+    categoryResponseList = await getCategoryListApi(context);
+
+    if (widget.id == 0 && categoryResponseList.data != null) {
+      selectedCategoryId = categoryResponseList.data![0].id;
+    }
+    setState(() {});
   }
 
   XFile? _imageFile;
@@ -34,8 +49,13 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
   void _pickImage() async {
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
       setState(() {
-        _imageFile = pickedFile;
+        if (pickedFile != null) {
+          _imageFile = pickedFile;
+        } else {
+          print("No image selected");
+        }
       });
     } catch (e) {
       print("Image picker error " + e.toString());
@@ -65,11 +85,11 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
           ],
         ),
       );
-    } else if (widget.CategoryImage != '') {
+    } else if (widget.BannerUrl != '') {
       return CachedNetworkImage(
         width: 100,
         height: 100,
-        imageUrl: widget.CategoryImage,
+        imageUrl: '${BASE_URL_IMAGE}${widget.BannerUrl}',
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => Icon(Icons.error),
       );
@@ -98,8 +118,8 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text(widget.id != 0 ? 'Edit Category' : 'Add Category')),
+      appBar:
+          AppBar(title: Text(widget.id != 0 ? 'Edit Banner' : 'Add Banner')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,39 +173,65 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(15),
-            alignment: Alignment.center,
-            child: TextField(
-              controller: categoryController,
-              decoration: InputDecoration(
-                label: Text('Category Name'),
-                hintText: 'Type Text Here...',
-              ),
+            alignment: Alignment.topLeft,
+            padding: EdgeInsets.all(10),
+            child: Text(
+              'Category',
+              style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 25),
             ),
           ),
+          categoryResponseList.data != null
+              ? Container(
+                  padding: EdgeInsets.all(10),
+                  alignment: Alignment.topLeft,
+                  child: DropdownButton<int>(
+                    value: selectedCategoryId,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.blueAccent,
+                    ),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        selectedCategoryId = newValue ?? 0;
+                      });
+                    },
+                    items: categoryResponseList.data!
+                        .map((e) => DropdownMenuItem<int>(
+                              value: e.id,
+                              child: Text(e.categoryName ?? ''),
+                            ))
+                        .toList(),
+                  ),
+                )
+              : Container(),
           Column(
             children: [
               Center(
-                child: Builder(builder: (context) {
-                  return Container(
-                    margin: EdgeInsets.all(25),
-                    child: FlatButton(
-                      child: Text(
-                        widget.id != 0 ? 'Edit Category' : 'Add Category',
-                        style: TextStyle(fontSize: 20.0),
-                      ),
-                      color: Colors.blueAccent,
-                      textColor: Colors.white,
-                      onPressed: () async {
-                        if (widget.id != 0) {
-                          editCategory();
-                        } else {
-                          addNewCategory();
-                        }
-                      },
+                child: Container(
+                  margin: EdgeInsets.all(25),
+                  child: FlatButton(
+                    child: Text(
+                      widget.id != 0 ? 'Edit Banner' : 'Add Banner',
+                      style: TextStyle(fontSize: 20.0),
                     ),
-                  );
-                }),
+                    color: Colors.blueAccent,
+                    textColor: Colors.white,
+                    onPressed: () async {
+                      if (widget.id != 0) {
+                        editBanner();
+                      } else {
+                        addNewBanner();
+                      }
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -194,7 +240,7 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
     );
   }
 
-  Future<void> addNewCategory() async {
+  Future<void> addNewBanner() async {
     String imageurl = '';
     if (_imageFile != null) {
       CommonResponseModel res = CommonResponseModel();
@@ -207,14 +253,14 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
       print(res.message);
     }
     CommonResponseModel response =
-        await createNewCategory(context, categoryController.text, imageurl);
+        await createNewBanner(context, imageurl, selectedCategoryId.toString());
     if (response.error ?? true) {
     } else {
       Navigator.pop(context);
     }
   }
 
-  Future<void> editCategory() async {
+  Future<void> editBanner() async {
     String imageurl = '';
     if (_imageFile != null) {
       CommonResponseModel res = CommonResponseModel();
@@ -226,10 +272,10 @@ class _ManageCategoryEditState extends State<ManageCategoryEdit> {
       imageurl = res.message ?? '';
       print(res.message);
     } else {
-      imageurl = widget.CategoryImage;
+      imageurl = widget.BannerUrl;
     }
-    CommonResponseModel response = await getCategoryEditList(
-        context, categoryController.text, widget.id, imageurl);
+    CommonResponseModel response = await editBannerApi(
+        context, widget.id.toString(), imageurl, selectedCategoryId.toString());
     if (response.error ?? true) {
     } else {
       Navigator.pop(context);

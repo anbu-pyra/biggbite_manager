@@ -4,13 +4,14 @@
 
 class CategoryResponseList {
   CategoryResponseList({
-      bool? error, 
-      String? message, 
-      List<Data>? data,}){
+    bool? error,
+    String? message,
+    List<CategoryList>? data,
+  }) {
     _error = error;
     _message = message;
     _data = data;
-}
+  }
 
   CategoryResponseList.fromJson(dynamic json) {
     _error = json['error'];
@@ -18,17 +19,17 @@ class CategoryResponseList {
     if (json['data'] != null) {
       _data = [];
       json['data'].forEach((v) {
-        _data?.add(Data.fromJson(v));
+        _data?.add(CategoryList.fromJson(v));
       });
     }
   }
   bool? _error;
   String? _message;
-  List<Data>? _data;
+  List<CategoryList>? _data;
 
   bool? get error => _error;
   String? get message => _message;
-  List<Data>? get data => _data;
+  List<CategoryList>? get data => _data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -39,29 +40,34 @@ class CategoryResponseList {
     }
     return map;
   }
-
 }
 
 /// id : 1
 /// category_name : "Mobilesjff anbu"
 
-class Data {
-  Data({
-      int? id, 
-      String? categoryName,}){
+class CategoryList {
+  CategoryList({
+    int id = 0,
+    String? categoryName,
+    String? categoryImage,
+  }) {
     _id = id;
     _categoryName = categoryName;
-}
-
-  Data.fromJson(dynamic json) {
-    _id = json['id'];
-    _categoryName = json['category_name'];
+    _categoryImage = categoryImage;
   }
-  int? _id;
-  String? _categoryName;
 
-  int? get id => _id;
+  CategoryList.fromJson(dynamic json) {
+    _id = json['id'] ?? 0;
+    _categoryName = json['category_name'];
+    _categoryImage = json['category_image'];
+  }
+  int _id = 0;
+  String? _categoryName;
+  String? _categoryImage;
+
+  int get id => _id;
   String? get categoryName => _categoryName;
+  String? get categoryImage => _categoryImage;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -69,5 +75,4 @@ class Data {
     map['category_name'] = _categoryName;
     return map;
   }
-
 }
